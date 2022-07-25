@@ -43,11 +43,11 @@ public class SanchayUserServiceImpl implements SanchayUserService, UserDetailsSe
     private ModelMapper modelMapper;
 //    private SanchayModelMapper modelMapper;
 
-//    @Autowired
-//    private ObjectMapper plainObjectMapper;
-
     @Autowired
-    private ObjectMapper polymorphicObjectMapper;
+    private ObjectMapper plainObjectMapper;
+
+//    @Autowired
+//    private ObjectMapper polymorphicObjectMapper;
 
 //    private SanchayDeepModelMapper deepModelMapper;
 //
@@ -61,17 +61,17 @@ public class SanchayUserServiceImpl implements SanchayUserService, UserDetailsSe
         return modelMapper;
     }
 
-//    public ObjectMapper getPlainObjectMapper()
-////    public SanchayModelMapper getModelMapper()
-//    {
-//        return plainObjectMapper;
-//    }
-
-    public ObjectMapper getPolymorphicObjectMapper()
+    public ObjectMapper getPlainObjectMapper()
 //    public SanchayModelMapper getModelMapper()
     {
-        return polymorphicObjectMapper;
+        return plainObjectMapper;
     }
+
+//    public ObjectMapper getPolymorphicObjectMapper()
+////    public SanchayModelMapper getModelMapper()
+//    {
+//        return polymorphicObjectMapper;
+//    }
 
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
@@ -523,7 +523,7 @@ public class SanchayUserServiceImpl implements SanchayUserService, UserDetailsSe
 
     public SanchayAnnotationManagementUpdateInfo saveAnnotationManagementUpdateInfo(SanchayAnnotationManagementUpdateInfo annotationManagementUpdateInfo)
     {
-        Map<String, SanchayUserDTO> allUsers = annotationManagementUpdateInfo.getAllUsers();
+        Map<String, SanchayUserDTO> allUsers = new LinkedHashMap<>(annotationManagementUpdateInfo.getAllUsers());
 
         allUsers.entrySet()
                 .forEach(
@@ -547,7 +547,7 @@ public class SanchayUserServiceImpl implements SanchayUserService, UserDetailsSe
                         }
                 );
 
-        Map<String, SanchayRoleDTO> allRoles = annotationManagementUpdateInfo.getAllRoles();
+        Map<String, SanchayRoleDTO> allRoles = new LinkedHashMap<>(annotationManagementUpdateInfo.getAllRoles());
 
         allRoles.entrySet()
                 .forEach(
@@ -571,7 +571,7 @@ public class SanchayUserServiceImpl implements SanchayUserService, UserDetailsSe
                         }
                 );
 
-        Map<String, SanchayOrganisationDTO> allOrganisations = annotationManagementUpdateInfo.getAllOrganisations();
+        Map<String, SanchayOrganisationDTO> allOrganisations = new LinkedHashMap<>(annotationManagementUpdateInfo.getAllOrganisations());
 
         allOrganisations.entrySet()
                 .forEach(
@@ -595,7 +595,7 @@ public class SanchayUserServiceImpl implements SanchayUserService, UserDetailsSe
                         }
                 );
 
-        Map<String, SanchayResourceLanguageDTO> allLanguages = annotationManagementUpdateInfo.getAllLanguages();
+        Map<String, SanchayResourceLanguageDTO> allLanguages = new LinkedHashMap<>(annotationManagementUpdateInfo.getAllLanguages());
 
         allLanguages.entrySet()
                 .forEach(
@@ -619,7 +619,7 @@ public class SanchayUserServiceImpl implements SanchayUserService, UserDetailsSe
                         }
                 );
 
-        Map<String, SanchayAnnotationLevelDTO> allLevels = annotationManagementUpdateInfo.getAllLevels();
+        Map<String, SanchayAnnotationLevelDTO> allLevels = new LinkedHashMap<>(annotationManagementUpdateInfo.getAllLevels());
 
         allLevels.entrySet()
                 .forEach(
@@ -841,13 +841,18 @@ public class SanchayUserServiceImpl implements SanchayUserService, UserDetailsSe
 
         try {
             SanchayBeanUtils.copyPropertiesNotNull(user, userDTO);
+
+            if(userDTO.getPassword() != null && !userDTO.getPassword().equals(""))
+            {
+                user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+            }
         } catch (InvocationTargetException e) {
             throw new RuntimeException(e);
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         }
 
-        Map<String, SanchayRoleSlimDTO> roleSlimDTOMap = userDTO.getRoles();
+        Map<String, SanchayRoleSlimDTO> roleSlimDTOMap = new LinkedHashMap<>(userDTO.getRoles());
 
         roleSlimDTOMap.entrySet().forEach(
                 (entry) -> {
@@ -859,7 +864,7 @@ public class SanchayUserServiceImpl implements SanchayUserService, UserDetailsSe
                 }
         );
 
-        Map<String, SanchayOrganisationSlimDTO> organisationSlimDTOMap = userDTO.getOrganisations();
+        Map<String, SanchayOrganisationSlimDTO> organisationSlimDTOMap = new LinkedHashMap<>(userDTO.getOrganisations());
 
         organisationSlimDTOMap.entrySet().forEach(
                 (entry) -> {
@@ -871,7 +876,7 @@ public class SanchayUserServiceImpl implements SanchayUserService, UserDetailsSe
                 }
         );
 
-        Map<String, SanchayResourceLanguageSlimDTO> languageSlimDTOMap = userDTO.getLanguages();
+        Map<String, SanchayResourceLanguageSlimDTO> languageSlimDTOMap = new LinkedHashMap<>(userDTO.getLanguages());
 
         languageSlimDTOMap.entrySet().forEach(
                 (entry) -> {
@@ -883,7 +888,7 @@ public class SanchayUserServiceImpl implements SanchayUserService, UserDetailsSe
                 }
         );
 
-        Map<String, SanchayAnnotationLevelSlimDTO> levelSlimDTOMap = userDTO.getAnnotationLevels();
+        Map<String, SanchayAnnotationLevelSlimDTO> levelSlimDTOMap = new LinkedHashMap<>(userDTO.getAnnotationLevels());
 
         levelSlimDTOMap.entrySet().forEach(
                 (entry) -> {
@@ -910,7 +915,7 @@ public class SanchayUserServiceImpl implements SanchayUserService, UserDetailsSe
             throw new RuntimeException(e);
         }
 
-        Map<String, SanchayUserSlimDTO> userSlimDTOMap = roleDTO.getUsers();
+        Map<String, SanchayUserSlimDTO> userSlimDTOMap = new LinkedHashMap<>(roleDTO.getUsers());
 
         userSlimDTOMap.entrySet().forEach(
                 (entry) -> {
@@ -937,7 +942,7 @@ public class SanchayUserServiceImpl implements SanchayUserService, UserDetailsSe
             throw new RuntimeException(e);
         }
 
-        Map<String, SanchayUserSlimDTO> userSlimDTOMap = organisationDTO.getUsers();
+        Map<String, SanchayUserSlimDTO> userSlimDTOMap = new LinkedHashMap<>(organisationDTO.getUsers());
 
         userSlimDTOMap.entrySet().forEach(
                 (entry) -> {
@@ -964,7 +969,7 @@ public class SanchayUserServiceImpl implements SanchayUserService, UserDetailsSe
             throw new RuntimeException(e);
         }
 
-        Map<String, SanchayUserSlimDTO> userSlimDTOMap = resourceLanguageDTO.getUsers();
+        Map<String, SanchayUserSlimDTO> userSlimDTOMap = new LinkedHashMap<>(resourceLanguageDTO.getUsers());
 
         userSlimDTOMap.entrySet().forEach(
                 (entry) -> {
@@ -991,7 +996,7 @@ public class SanchayUserServiceImpl implements SanchayUserService, UserDetailsSe
             throw new RuntimeException(e);
         }
 
-        Map<String, SanchayUserSlimDTO> userSlimDTOMap = levelDTO.getUsers();
+        Map<String, SanchayUserSlimDTO> userSlimDTOMap = new LinkedHashMap<>(levelDTO.getUsers());
 
         userSlimDTOMap.entrySet().forEach(
                 (entry) -> {
@@ -1010,7 +1015,7 @@ public class SanchayUserServiceImpl implements SanchayUserService, UserDetailsSe
     {
         SanchayUser user = userRepo.findByUsername(userDTO.getUsername());
 
-//        SanchayServiceUtils.safeDeleteUser(user);
+        SanchayServiceUtils.safeDeleteUser(user);
 
         userRepo.delete(user);
     }
@@ -1019,7 +1024,7 @@ public class SanchayUserServiceImpl implements SanchayUserService, UserDetailsSe
     {
         SanchayRole role = roleRepo.findByName(roleDTO.getName());
 
-//        SanchayServiceUtils.safeDeleteRole(role);
+        SanchayServiceUtils.safeDeleteRole(role);
 
         roleRepo.delete(role);
     }
@@ -1028,7 +1033,7 @@ public class SanchayUserServiceImpl implements SanchayUserService, UserDetailsSe
     {
         SanchayOrganisation organisation = organisationRepo.findByName(organisationDTO.getName());
 
-//        SanchayServiceUtils.safeDeleteOrganisation(organisation);
+        SanchayServiceUtils.safeDeleteOrganisation(organisation);
 
         organisationRepo.delete(organisation);
     }
@@ -1037,7 +1042,7 @@ public class SanchayUserServiceImpl implements SanchayUserService, UserDetailsSe
     {
         SanchayResourceLanguage language = languageRepo.findByName(resourceLanguageDTO.getName());
 
-//        SanchayServiceUtils.safeDeleteLanguage(language);
+        SanchayServiceUtils.safeDeleteLanguage(language);
 
         languageRepo.delete(language);
     }
@@ -1046,7 +1051,7 @@ public class SanchayUserServiceImpl implements SanchayUserService, UserDetailsSe
     {
         SanchayAnnotationLevel annotationLevel = annotationLevelRepo.findByName(levelDTO.getName());
 
-//        SanchayServiceUtils.safeDeleteAnnotationLevel(annotationLevel);
+        SanchayServiceUtils.safeDeleteAnnotationLevel(annotationLevel);
 
         annotationLevelRepo.delete(annotationLevel);
     }
@@ -1057,17 +1062,22 @@ public class SanchayUserServiceImpl implements SanchayUserService, UserDetailsSe
 
         try {
             SanchayBeanUtils.copyPropertiesNotNull(user, userDTO);
+
+            if(userDTO.getPassword() != null && !userDTO.getPassword().equals(""))
+            {
+                user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+            }
         } catch (InvocationTargetException e) {
             throw new RuntimeException(e);
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         }
 
-        Set<String> rolesDeleted = userDTO.getRolesDeleted();
+        Map<String, SanchayRoleSlimDTO> rolesDeleted = new LinkedHashMap<>(userDTO.getRolesDeleted());
 
-        rolesDeleted.stream().forEach(
+        rolesDeleted.entrySet().stream().forEach(
                 (entry) -> {
-                    String name = entry;
+                    String name = entry.getKey();
                     SanchayRole role = roleRepo.findByName(name);
 
                     if(role != null) {
@@ -1076,11 +1086,11 @@ public class SanchayUserServiceImpl implements SanchayUserService, UserDetailsSe
                 }
         );
 
-        Set<String> organisationsDeleted = userDTO.getOrganisationsDeleted();
+        Map<String, SanchayOrganisationSlimDTO> organisationsDeleted = new LinkedHashMap<>(userDTO.getOrganisationsDeleted());
 
-        organisationsDeleted.stream().forEach(
+        organisationsDeleted.entrySet().stream().forEach(
                 (entry) -> {
-                    String name = entry;
+                    String name = entry.getKey();
 
                     SanchayOrganisation organisation = organisationRepo.findByName(name);
                     if(organisation != null) {
@@ -1089,11 +1099,11 @@ public class SanchayUserServiceImpl implements SanchayUserService, UserDetailsSe
                 }
         );
 
-        Set<String> languagesDeleted = userDTO.getLanguagesDeleted();
+        Map<String,SanchayResourceLanguageSlimDTO > languagesDeleted = new LinkedHashMap<>(userDTO.getLanguagesDeleted());
 
-        languagesDeleted.stream().forEach(
+        languagesDeleted.entrySet().stream().forEach(
                 (entry) -> {
-                    String name = entry;
+                    String name = entry.getKey();
 
                     SanchayResourceLanguage language = languageRepo.findByName(name);
                     if(language != null) {
@@ -1102,11 +1112,11 @@ public class SanchayUserServiceImpl implements SanchayUserService, UserDetailsSe
                 }
         );
 
-        Set<String> levelsDeleted = userDTO.getAnnotationLevelsDeleted();
+        Map<String, SanchayAnnotationLevelSlimDTO> levelsDeleted = new LinkedHashMap<>(userDTO.getAnnotationLevelsDeleted());
 
-        levelsDeleted.stream().forEach(
+        levelsDeleted.entrySet().stream().forEach(
                 (entry) -> {
-                    String name = entry;
+                    String name = entry.getKey();
 
                     SanchayAnnotationLevel level = annotationLevelRepo.findByName(name);
                     if(level != null) {
@@ -1115,11 +1125,11 @@ public class SanchayUserServiceImpl implements SanchayUserService, UserDetailsSe
                 }
         );
 
-        Set<String> rolesAdded = userDTO.getRolesAdded();
+        Map<String, SanchayRoleSlimDTO> rolesAdded = new LinkedHashMap<>(userDTO.getRolesAdded());
 
-        rolesAdded.stream().forEach(
+        rolesAdded.entrySet().stream().forEach(
                 (entry) -> {
-                    String name = entry;
+                    String name = entry.getKey();
                     SanchayRole role = roleRepo.findByName(name);
 
                     if(role != null) {
@@ -1128,11 +1138,11 @@ public class SanchayUserServiceImpl implements SanchayUserService, UserDetailsSe
                 }
         );
 
-        Set<String> organisationsAdded = userDTO.getOrganisationsAdded();
+        Map<String, SanchayOrganisationSlimDTO> organisationsAdded = new LinkedHashMap<>(userDTO.getOrganisationsAdded());
 
-        organisationsAdded.stream().forEach(
+        organisationsAdded.entrySet().stream().forEach(
                 (entry) -> {
-                    String name = entry;
+                    String name = entry.getKey();
 
                     SanchayOrganisation organisation = organisationRepo.findByName(name);
                     if(organisation != null) {
@@ -1141,11 +1151,11 @@ public class SanchayUserServiceImpl implements SanchayUserService, UserDetailsSe
                 }
         );
 
-        Set<String> languagesAdded = userDTO.getLanguagesAdded();
+        Map<String, SanchayResourceLanguageSlimDTO> languagesAdded = new LinkedHashMap<>(userDTO.getLanguagesAdded());
 
-        languagesAdded.stream().forEach(
+        languagesAdded.entrySet().stream().forEach(
                 (entry) -> {
-                    String name = entry;
+                    String name = entry.getKey();
 
                     SanchayResourceLanguage language = languageRepo.findByName(name);
 
@@ -1155,11 +1165,11 @@ public class SanchayUserServiceImpl implements SanchayUserService, UserDetailsSe
                 }
         );
 
-        Set<String> levelsAdded = userDTO.getAnnotationLevelsAdded();
+        Map<String, SanchayAnnotationLevelSlimDTO> levelsAdded = new LinkedHashMap<>(userDTO.getAnnotationLevelsAdded());
 
-        levelsAdded.stream().forEach(
+        levelsAdded.entrySet().stream().forEach(
                 (entry) -> {
-                    String name = entry;
+                    String name = entry.getKey();
 
                     SanchayAnnotationLevel level = annotationLevelRepo.findByName(name);
 
@@ -1184,11 +1194,11 @@ public class SanchayUserServiceImpl implements SanchayUserService, UserDetailsSe
             throw new RuntimeException(e);
         }
 
-        Set<String> usersDeleted = roleDTO.getUsersDeleted();
+        Map<String, SanchayUserSlimDTO> usersDeleted = new LinkedHashMap<>(roleDTO.getUsersDeleted());
 
-        usersDeleted.stream().forEach(
+        usersDeleted.entrySet().stream().forEach(
                 (entry) -> {
-                    String username = entry;
+                    String username = entry.getKey();
                     SanchayUser user = userRepo.findByUsername(username);
                     if(user != null) {
                         role.removeUser(user);
@@ -1196,11 +1206,11 @@ public class SanchayUserServiceImpl implements SanchayUserService, UserDetailsSe
                 }
         );
 
-        Set<String> usersAdded = roleDTO.getUsersAdded();
+        Map<String, SanchayUserSlimDTO> usersAdded = new LinkedHashMap<>(roleDTO.getUsersAdded());
 
-        usersAdded.stream().forEach(
+        usersAdded.entrySet().stream().forEach(
                 (entry) -> {
-                    String username = entry;
+                    String username = entry.getKey();
                     SanchayUser user = userRepo.findByUsername(username);
                     if(user != null) {
                         role.addUser(user);
@@ -1223,11 +1233,11 @@ public class SanchayUserServiceImpl implements SanchayUserService, UserDetailsSe
             throw new RuntimeException(e);
         }
 
-        Set<String> usersDeleted = organisationDTO.getUsersDeleted();
+        Map<String, SanchayUserSlimDTO> usersDeleted = new LinkedHashMap<>(organisationDTO.getUsersDeleted());
 
-        usersDeleted.stream().forEach(
+        usersDeleted.entrySet().stream().forEach(
                 (entry) -> {
-                    String username = entry;
+                    String username = entry.getKey();
                     SanchayUser user = userRepo.findByUsername(username);
                     if(user != null) {
                         organisation.removeUser(user);
@@ -1235,11 +1245,11 @@ public class SanchayUserServiceImpl implements SanchayUserService, UserDetailsSe
                 }
         );
 
-        Set<String> usersAdded = organisationDTO.getUsersAdded();
+        Map<String, SanchayUserSlimDTO> usersAdded = new LinkedHashMap<>(organisationDTO.getUsersAdded());
 
-        usersAdded.stream().forEach(
+        usersAdded.entrySet().stream().forEach(
                 (entry) -> {
-                    String username = entry;
+                    String username = entry.getKey();
                     SanchayUser user = userRepo.findByUsername(username);
                     if(user != null) {
                         organisation.addUser(user);
@@ -1262,11 +1272,11 @@ public class SanchayUserServiceImpl implements SanchayUserService, UserDetailsSe
             throw new RuntimeException(e);
         }
 
-        Set<String> usersDeleted = resourceLanguageDTO.getUsersDeleted();
+        Map<String, SanchayUserSlimDTO> usersDeleted = new LinkedHashMap<>(resourceLanguageDTO.getUsersDeleted());
 
-        usersDeleted.stream().forEach(
+        usersDeleted.entrySet().stream().forEach(
                 (entry) -> {
-                    String username = entry;
+                    String username = entry.getKey();
                     SanchayUser user = userRepo.findByUsername(username);
                     if(user != null) {
                         language.removeUser(user);
@@ -1274,11 +1284,11 @@ public class SanchayUserServiceImpl implements SanchayUserService, UserDetailsSe
                 }
         );
 
-        Set<String> usersAdded = resourceLanguageDTO.getUsersAdded();
+        Map<String, SanchayUserSlimDTO> usersAdded = new LinkedHashMap<>(resourceLanguageDTO.getUsersAdded());
 
-        usersAdded.stream().forEach(
+        usersAdded.entrySet().stream().forEach(
                 (entry) -> {
-                    String username = entry;
+                    String username = entry.getKey();
                     SanchayUser user = userRepo.findByUsername(username);
                     if(user != null) {
                         language.addUser(user);
@@ -1301,11 +1311,11 @@ public class SanchayUserServiceImpl implements SanchayUserService, UserDetailsSe
             throw new RuntimeException(e);
         }
 
-        Set<String> usersDeleted = levelDTO.getUsersDeleted();
+        Map<String, SanchayUserSlimDTO> usersDeleted = new LinkedHashMap<>(levelDTO.getUsersDeleted());
 
-        usersDeleted.stream().forEach(
+        usersDeleted.entrySet().stream().forEach(
                 (entry) -> {
-                    String username = entry;
+                    String username = entry.getKey();
                     SanchayUser user = userRepo.findByUsername(username);
                     if(user != null) {
                         annotationLevel.removeUser(user);
@@ -1313,11 +1323,11 @@ public class SanchayUserServiceImpl implements SanchayUserService, UserDetailsSe
                 }
         );
 
-        Set<String> usersAdded = levelDTO.getUsersAdded();
+        Map<String, SanchayUserSlimDTO> usersAdded = new LinkedHashMap<>(levelDTO.getUsersAdded());
 
-        usersAdded.stream().forEach(
+        usersAdded.entrySet().stream().forEach(
                 (entry) -> {
-                    String username = entry;
+                    String username = entry.getKey();
                     SanchayUser user = userRepo.findByUsername(username);
                     if(user != null) {
                         annotationLevel.addUser(user);

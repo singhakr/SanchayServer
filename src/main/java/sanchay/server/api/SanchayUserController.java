@@ -46,7 +46,7 @@ public class SanchayUserController {
 //        this.modelMapper.addMappings(warehouseMapping);
 //    }
 
-    @GetMapping("/current-user")
+    @PostMapping("/current-user")
     public ResponseEntity<SanchayUserDTO> getCurrentUser(HttpServletRequest request, HttpServletResponse response) {
 //    public ResponseEntity<String> getCurrentUser(HttpServletRequest request, HttpServletResponse response) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -75,9 +75,9 @@ public class SanchayUserController {
 
         return ResponseEntity.ok().body(currentUserDTO);
 
-//
+
 //        try {
-//            return ResponseEntity.ok().body(mapper.writeValueAsString(currentUser));
+//            return ResponseEntity.ok().body(mapper.writeValueAsString(currentUserDTO));
 //        } catch (JsonProcessingException e) {
 //            return ResponseEntity.notFound().build();
 ////            throw new RuntimeException(e);
@@ -371,44 +371,54 @@ public class SanchayUserController {
     }
 
     @PostMapping("/annotation-management-info")
-    public ResponseEntity<String> getSanchayAnnotationManagementUpdateInfo()
-//    public ResponseEntity<SanchayAnnotationManagementUpdateInfo> getSanchayAnnotationManagementUpdateInfo()
+//    public ResponseEntity<String> getSanchayAnnotationManagementUpdateInfo()
+    public ResponseEntity<SanchayAnnotationManagementUpdateInfo> getSanchayAnnotationManagementUpdateInfo()
     {
         SanchayAnnotationManagementUpdateInfo annotationManagementUpdateInfo = userService.getAnnotationManagementUpdateInfo();
 
         String annotationManagementUpdateInfoString = null;
 
         try {
-            annotationManagementUpdateInfoString = userService.getPolymorphicObjectMapper().writeValueAsString(annotationManagementUpdateInfo);
+            annotationManagementUpdateInfoString = userService.getPlainObjectMapper().writeValueAsString(annotationManagementUpdateInfo);
+//            annotationManagementUpdateInfoString = userService.getPolymorphicObjectMapper().writeValueAsString(annotationManagementUpdateInfo);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
 
-        log.info("Serialized annotation management info: \n", annotationManagementUpdateInfoString);
+        log.info("Serialized annotation management info: \n");
+        log.info(annotationManagementUpdateInfoString);
 
-        return ResponseEntity.ok().body(annotationManagementUpdateInfoString);
-//        return ResponseEntity.ok().body(userService.getAnnotationManagementUpdateInfo());
+//        return ResponseEntity.ok().body(annotationManagementUpdateInfoString);
+        return ResponseEntity.ok().body(annotationManagementUpdateInfo);
     }
 
     @PostMapping("/annotation-management-info/save")
-    public ResponseEntity<String> saveSanchayAnnotationManagementUpdateInfo(@RequestBody String annotationManagementUpdateInfoString)
-//    public ResponseEntity<SanchayAnnotationManagementUpdateInfo> saveSanchayAnnotationManagementUpdateInfo(@RequestBody SanchayAnnotationManagementUpdateInfo annotationManagementUpdateInfo)
+//    public ResponseEntity<String> saveSanchayAnnotationManagementUpdateInfo(@RequestBody String annotationManagementUpdateInfoString)
+    public ResponseEntity<SanchayAnnotationManagementUpdateInfo> saveSanchayAnnotationManagementUpdateInfo(@RequestBody SanchayAnnotationManagementUpdateInfo annotationManagementUpdateInfo)
     {
-        SanchayAnnotationManagementUpdateInfo annotationManagementUpdateInfo = null;
+        annotationManagementUpdateInfo = userService.saveAnnotationManagementUpdateInfo(annotationManagementUpdateInfo);
 
-        log.info("Received annotation management string: \n", annotationManagementUpdateInfoString);
+//        log.info("Received annotation management string: \n", annotationManagementUpdateInfoString);
 
         try {
-            annotationManagementUpdateInfo = userService.getPolymorphicObjectMapper().readValue(annotationManagementUpdateInfoString, SanchayAnnotationManagementUpdateInfo.class);
-            annotationManagementUpdateInfoString = userService.getPolymorphicObjectMapper().writeValueAsString(annotationManagementUpdateInfo);
+//            annotationManagementUpdateInfo = userService.getPlainObjectMapper().readValue(annotationManagementUpdateInfoString, SanchayAnnotationManagementUpdateInfo.class);
+            String annotationManagementUpdateInfoString = userService.getPlainObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(annotationManagementUpdateInfo);
+//            annotationManagementUpdateInfo = userService.getPolymorphicObjectMapper().readValue(annotationManagementUpdateInfoString, SanchayAnnotationManagementUpdateInfo.class);
+//            annotationManagementUpdateInfoString = userService.getPolymorphicObjectMapper().writeValueAsString(annotationManagementUpdateInfo);
+            log.info("Annotation management info string being sent: \n");
+            log.info(annotationManagementUpdateInfoString);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
 
-        log.info("Annotation management info string being sent: \n", annotationManagementUpdateInfoString);
+//        try {
+////            log.info(userService.getPlainObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(annotationManagementUpdateInfoString));
+//        } catch (JsonProcessingException e) {
+//            throw new RuntimeException(e);
+//        }
 
-        return ResponseEntity.ok().body(annotationManagementUpdateInfoString);
-//            return ResponseEntity.ok().body(userService.saveAnnotationManagementUpdateInfo(annotationManagementUpdateInfo));
+//        return ResponseEntity.ok().body(annotationManagementUpdateInfoString);
+            return ResponseEntity.ok().body(annotationManagementUpdateInfo);
 
 //        return ResponseEntity.internalServerError().body(null);
     }

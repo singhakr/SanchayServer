@@ -533,7 +533,7 @@ public class SanchayServiceUtils
 
     public static SanchayResourceLanguage safeDeleteLanguage(SanchayResourceLanguage language)
     {
-        Map<String, SanchayUser> userMap = language.getUsers();
+        Map<String, SanchayUser> userMap = new LinkedHashMap<>(language.getUsers());
 
         for(Map.Entry <String, SanchayUser> entry: userMap.entrySet())
         {
@@ -545,7 +545,7 @@ public class SanchayServiceUtils
 
     public static SanchayOrganisation safeDeleteOrganisation(SanchayOrganisation organisation)
     {
-        Map<String, SanchayUser> userMap = organisation.getUsers();
+        Map<String, SanchayUser> userMap = new LinkedHashMap<>(organisation.getUsers());
 
         for(Map.Entry <String, SanchayUser> entry: userMap.entrySet())
         {
@@ -557,7 +557,7 @@ public class SanchayServiceUtils
 
     public static SanchayAnnotationLevel safeDeleteAnnotationLevel(SanchayAnnotationLevel annotationLevel)
     {
-        Map<String, SanchayUser> userMap = annotationLevel.getUsers();
+        Map<String, SanchayUser> userMap = new LinkedHashMap<>(annotationLevel.getUsers());
 
         for(Map.Entry <String, SanchayUser> entry: userMap.entrySet())
         {

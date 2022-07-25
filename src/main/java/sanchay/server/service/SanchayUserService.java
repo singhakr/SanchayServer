@@ -11,8 +11,8 @@ public interface SanchayUserService {
 //    SanchayDeepModelMapper getDeepModelMapper();
 //    SanchayModelMapper getModelMapper();
     ModelMapper getModelMapper();
-//    ObjectMapper getPlainObjectMapper();
-    ObjectMapper getPolymorphicObjectMapper();
+    ObjectMapper getPlainObjectMapper();
+//    ObjectMapper getPolymorphicObjectMapper();
     SanchayUserDTO getUserDTO(String username, boolean serverSide);
     SanchayUser getUser(String username, boolean serverSide);
     Map<String, SanchayUserDTO> getAllUsers();
