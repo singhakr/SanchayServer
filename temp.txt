@@ -1,0 +1,29 @@
+RestTemplate restTemplate = new RestTemplate();
+    restTemplate.getMessageConverters().add(new ByteArrayHttpMessageConverter());
+
+    HttpHeaders headers = new HttpHeaders();
+    //headers.add("Authorization", "Bearer SOME_BEARER_TOKEN"); //if requires some token
+    headers.setAccept(Arrays.asList(MediaType.APPLICATION_PDF));
+
+    HttpEntity<String> entity = new HttpEntity<>(headers);
+
+    try {
+        ResponseEntity<Resource> response = restTemplate.exchange(
+                "https://SOME_API.COM/api/docs/12345",
+                HttpMethod.GET, entity, Resource.class);
+
+
+        if (response.getStatusCode() == HttpStatus.OK) {
+            String disposition =  response.getHeaders().get("Content-Disposition").get(0);
+            String fileName = disposition.replaceFirst("(?i)^.*filename=\"?([^\"]+)\"?.*$", "$1");//get the filename from the Content-Disposition header
+            fileName = URLDecoder.decode(fileName, String.valueOf(StandardCharsets.ISO_8859_1));
+
+            //save to examine file
+            File targetFile = new File("c:/temp/" + fileName);
+            FileUtils.copyInputStreamToFile(response.getBody().getInputStream(), targetFile);
+        }
+    } catch (RestClientException e) {
+        e.printStackTrace();
+    } catch (IOException e) {
+        e.printStackTrace();
+    }

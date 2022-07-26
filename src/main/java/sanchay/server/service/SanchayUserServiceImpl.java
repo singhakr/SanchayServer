@@ -523,29 +523,7 @@ public class SanchayUserServiceImpl implements SanchayUserService, UserDetailsSe
 
     public SanchayAnnotationManagementUpdateInfo saveAnnotationManagementUpdateInfo(SanchayAnnotationManagementUpdateInfo annotationManagementUpdateInfo)
     {
-        Map<String, SanchayUserDTO> allUsers = new LinkedHashMap<>(annotationManagementUpdateInfo.getAllUsers());
-
-        allUsers.entrySet()
-                .forEach(
-                        (entry) ->
-                        {
-                            String username = entry.getKey();
-                            SanchayUserDTO userDTO = entry.getValue();
-
-                            if(userDTO.isToBeAdded())
-                            {
-                                deepAddUser(userDTO);
-                            }
-                            else if(userDTO.isToBeDeleted())
-                            {
-                                deepDeleteUser(userDTO);
-                            }
-                            else if(userDTO.isDirty())
-                            {
-                                deepUpdateUser(userDTO);
-                            }
-                        }
-                );
+        log.info("Started saving roles");
 
         Map<String, SanchayRoleDTO> allRoles = new LinkedHashMap<>(annotationManagementUpdateInfo.getAllRoles());
 
@@ -558,18 +536,26 @@ public class SanchayUserServiceImpl implements SanchayUserService, UserDetailsSe
 
                             if(roleDTO.isToBeAdded())
                             {
+                                log.info("Adding roles");
+
                                 deepAddRole(roleDTO);
                             }
                             else if(roleDTO.isToBeDeleted())
                             {
+                                log.info("Deleting roles");
+
                                 deepDeleteRole(roleDTO);
                             }
                             else if(roleDTO.isDirty())
                             {
+                                log.info("Updating roles");
+
                                 deepUpdateRole(roleDTO);
                             }
                         }
                 );
+
+        log.info("Started saving organisations");
 
         Map<String, SanchayOrganisationDTO> allOrganisations = new LinkedHashMap<>(annotationManagementUpdateInfo.getAllOrganisations());
 
@@ -582,18 +568,26 @@ public class SanchayUserServiceImpl implements SanchayUserService, UserDetailsSe
 
                             if(organisationDTO.isToBeAdded())
                             {
+                                log.info("Adding organisations");
+
                                 deepAddOrganisation(organisationDTO);
                             }
                             else if(organisationDTO.isToBeDeleted())
                             {
+                                log.info("Deleting organisations");
+
                                 deepDeleteOrganisation(organisationDTO);
                             }
                             else if(organisationDTO.isDirty())
                             {
+                                log.info("Updating organisations");
+
                                 deepUpdateOrganisation(organisationDTO);
                             }
                         }
                 );
+
+        log.info("Started saving languages");
 
         Map<String, SanchayResourceLanguageDTO> allLanguages = new LinkedHashMap<>(annotationManagementUpdateInfo.getAllLanguages());
 
@@ -606,18 +600,26 @@ public class SanchayUserServiceImpl implements SanchayUserService, UserDetailsSe
 
                             if(languageDTO.isToBeAdded())
                             {
+                                log.info("Adding languages");
+
                                 deepAddLanguage(languageDTO);
                             }
                             else if(languageDTO.isToBeDeleted())
                             {
+                                log.info("Deleting languages");
+
                                 deepDeleteLanguage(languageDTO);
                             }
                             else if(languageDTO.isDirty())
                             {
+                                log.info("Updating languages");
+
                                 deepUpdateLanguage(languageDTO);
                             }
                         }
                 );
+
+        log.info("Started saving levels");
 
         Map<String, SanchayAnnotationLevelDTO> allLevels = new LinkedHashMap<>(annotationManagementUpdateInfo.getAllLevels());
 
@@ -630,15 +632,53 @@ public class SanchayUserServiceImpl implements SanchayUserService, UserDetailsSe
 
                             if(levelDTO.isToBeAdded())
                             {
+                                log.info("Adding levels");
+
                                 deepAddAnnotationLevel(levelDTO);
                             }
                             else if(levelDTO.isToBeDeleted())
                             {
+                                log.info("Deleting levels");
+
                                 deepDeleteAnnotationLevel(levelDTO);
                             }
                             else if(levelDTO.isDirty())
                             {
+                                log.info("Updating levels");
+
                                 deepUpdateAnnotationLevel(levelDTO);
+                            }
+                        }
+                );
+
+        log.info("Started saving users");
+
+        Map<String, SanchayUserDTO> allUsers = new LinkedHashMap<>(annotationManagementUpdateInfo.getAllUsers());
+
+        allUsers.entrySet()
+                .forEach(
+                        (entry) ->
+                        {
+                            String username = entry.getKey();
+                            SanchayUserDTO userDTO = entry.getValue();
+
+                            if(userDTO.isToBeAdded())
+                            {
+                                log.info("Adding users");
+
+                                deepAddUser(userDTO);
+                            }
+                            else if(userDTO.isToBeDeleted())
+                            {
+                                log.info("Deleting users");
+
+                                deepDeleteUser(userDTO);
+                            }
+                            else if(userDTO.isDirty())
+                            {
+                                log.info("Updating users");
+
+                                deepUpdateUser(userDTO);
                             }
                         }
                 );
@@ -837,6 +877,8 @@ public class SanchayUserServiceImpl implements SanchayUserService, UserDetailsSe
 
     private void deepAddUser(SanchayUserDTO userDTO)
     {
+        log.info("Adding user {}", userDTO.getUsername());
+
         SanchayUser user = new SanchayUser();
 
         try {
@@ -900,12 +942,15 @@ public class SanchayUserServiceImpl implements SanchayUserService, UserDetailsSe
                 }
         );
 
-        userRepo.saveAndFlush(user);
+//        userRepo.saveAndFlush(user);
+        userRepo.save(user);
     }
 
     private void deepAddRole(SanchayRoleDTO roleDTO)
     {
         SanchayRole role = new SanchayRole();
+
+        log.info("Adding role {}", roleDTO.getName());
 
         try {
             SanchayBeanUtils.copyPropertiesNotNull(role, roleDTO);
@@ -927,12 +972,15 @@ public class SanchayUserServiceImpl implements SanchayUserService, UserDetailsSe
                 }
         );
 
-        roleRepo.saveAndFlush(role);
+//        roleRepo.saveAndFlush(role);
+        roleRepo.save(role);
     }
 
     private void deepAddOrganisation(SanchayOrganisationDTO organisationDTO)
     {
         SanchayOrganisation organisation = new SanchayOrganisation();
+
+        log.info("Adding organisation {}", organisationDTO.getName());
 
         try {
             SanchayBeanUtils.copyPropertiesNotNull(organisation, organisationDTO);
@@ -954,12 +1002,15 @@ public class SanchayUserServiceImpl implements SanchayUserService, UserDetailsSe
                 }
         );
 
-        organisationRepo.saveAndFlush(organisation);
+//        organisationRepo.saveAndFlush(organisation);
+        organisationRepo.save(organisation);
     }
 
     private void deepAddLanguage(SanchayResourceLanguageDTO resourceLanguageDTO)
     {
         SanchayResourceLanguage language = new SanchayResourceLanguage();
+
+        log.info("Adding language {}", resourceLanguageDTO.getName());
 
         try {
             SanchayBeanUtils.copyPropertiesNotNull(language, resourceLanguageDTO);
@@ -981,12 +1032,15 @@ public class SanchayUserServiceImpl implements SanchayUserService, UserDetailsSe
                 }
         );
 
-        languageRepo.saveAndFlush(language);
+//        languageRepo.saveAndFlush(language);
+        languageRepo.save(language);
     }
 
     private void deepAddAnnotationLevel(SanchayAnnotationLevelDTO levelDTO)
     {
         SanchayAnnotationLevel annotationLevel = new SanchayAnnotationLevel();
+
+        log.info("Adding levels {}", levelDTO.getName());
 
         try {
             SanchayBeanUtils.copyPropertiesNotNull(annotationLevel, levelDTO);
@@ -1008,12 +1062,15 @@ public class SanchayUserServiceImpl implements SanchayUserService, UserDetailsSe
                 }
         );
 
-        annotationLevelRepo.saveAndFlush(annotationLevel);
+//        annotationLevelRepo.saveAndFlush(annotationLevel);
+        annotationLevelRepo.save(annotationLevel);
     }
 
     private void deepDeleteUser(SanchayUserDTO userDTO)
     {
         SanchayUser user = userRepo.findByUsername(userDTO.getUsername());
+
+        log.info("Deleting user {}", userDTO.getUsername());
 
         SanchayServiceUtils.safeDeleteUser(user);
 
@@ -1024,6 +1081,8 @@ public class SanchayUserServiceImpl implements SanchayUserService, UserDetailsSe
     {
         SanchayRole role = roleRepo.findByName(roleDTO.getName());
 
+        log.info("Deleting role {}", roleDTO.getName());
+
         SanchayServiceUtils.safeDeleteRole(role);
 
         roleRepo.delete(role);
@@ -1032,6 +1091,8 @@ public class SanchayUserServiceImpl implements SanchayUserService, UserDetailsSe
     private void deepDeleteOrganisation(SanchayOrganisationDTO organisationDTO)
     {
         SanchayOrganisation organisation = organisationRepo.findByName(organisationDTO.getName());
+
+        log.info("Deleting organisation {}", organisationDTO.getName());
 
         SanchayServiceUtils.safeDeleteOrganisation(organisation);
 
@@ -1042,6 +1103,8 @@ public class SanchayUserServiceImpl implements SanchayUserService, UserDetailsSe
     {
         SanchayResourceLanguage language = languageRepo.findByName(resourceLanguageDTO.getName());
 
+        log.info("Deleting language {}", resourceLanguageDTO.getName());
+
         SanchayServiceUtils.safeDeleteLanguage(language);
 
         languageRepo.delete(language);
@@ -1051,6 +1114,8 @@ public class SanchayUserServiceImpl implements SanchayUserService, UserDetailsSe
     {
         SanchayAnnotationLevel annotationLevel = annotationLevelRepo.findByName(levelDTO.getName());
 
+        log.info("Deleting level {}", levelDTO.getName());
+
         SanchayServiceUtils.safeDeleteAnnotationLevel(annotationLevel);
 
         annotationLevelRepo.delete(annotationLevel);
@@ -1059,6 +1124,8 @@ public class SanchayUserServiceImpl implements SanchayUserService, UserDetailsSe
     private void deepUpdateUser(SanchayUserDTO userDTO)
     {
         SanchayUser user = userRepo.findByUsername(userDTO.getUsername());
+
+        log.info("Updating user {}", userDTO.getUsername());
 
         try {
             SanchayBeanUtils.copyPropertiesNotNull(user, userDTO);
@@ -1179,12 +1246,15 @@ public class SanchayUserServiceImpl implements SanchayUserService, UserDetailsSe
                 }
         );
 
-        userRepo.saveAndFlush(user);
+//        userRepo.saveAndFlush(user);
+        userRepo.save(user);
     }
 
     private void deepUpdateRole(SanchayRoleDTO roleDTO)
     {
         SanchayRole role = roleRepo.findByName(roleDTO.getName());
+
+        log.info("Updating role {}", roleDTO.getName());
 
         try {
             SanchayBeanUtils.copyPropertiesNotNull(role, roleDTO);
@@ -1218,12 +1288,15 @@ public class SanchayUserServiceImpl implements SanchayUserService, UserDetailsSe
                 }
         );
 
-        roleRepo.saveAndFlush(role);
+//        roleRepo.saveAndFlush(role);
+        roleRepo.save(role);
     }
 
     private void deepUpdateOrganisation(SanchayOrganisationDTO organisationDTO)
     {
         SanchayOrganisation organisation = organisationRepo.findByName(organisationDTO.getName());
+
+        log.info("Updating organisation {}", organisationDTO.getName());
 
         try {
             SanchayBeanUtils.copyPropertiesNotNull(organisation, organisationDTO);
@@ -1257,12 +1330,15 @@ public class SanchayUserServiceImpl implements SanchayUserService, UserDetailsSe
                 }
         );
 
-        organisationRepo.saveAndFlush(organisation);
+//        organisationRepo.saveAndFlush(organisation);
+        organisationRepo.save(organisation);
     }
 
     private void deepUpdateLanguage(SanchayResourceLanguageDTO resourceLanguageDTO)
     {
         SanchayResourceLanguage language = languageRepo.findByName(resourceLanguageDTO.getName());
+
+        log.info("Updating language {}", resourceLanguageDTO.getName());
 
         try {
             SanchayBeanUtils.copyPropertiesNotNull(language, resourceLanguageDTO);
@@ -1296,12 +1372,15 @@ public class SanchayUserServiceImpl implements SanchayUserService, UserDetailsSe
                 }
         );
 
-        languageRepo.saveAndFlush(language);
+//        languageRepo.saveAndFlush(language);
+        languageRepo.save(language);
     }
 
     private void deepUpdateAnnotationLevel(SanchayAnnotationLevelDTO levelDTO)
     {
         SanchayAnnotationLevel annotationLevel = annotationLevelRepo.findByName(levelDTO.getName());
+
+        log.info("Updating level {}", levelDTO.getName());
 
         try {
             SanchayBeanUtils.copyPropertiesNotNull(annotationLevel, levelDTO);
@@ -1335,7 +1414,8 @@ public class SanchayUserServiceImpl implements SanchayUserService, UserDetailsSe
                 }
         );
 
-        annotationLevelRepo.saveAndFlush(annotationLevel);
+//        annotationLevelRepo.saveAndFlush(annotationLevel);
+        annotationLevelRepo.save(annotationLevel);
     }
 
     public SanchayDeepModelMapper getModelMapperInstance(UserRepo userRepo, RoleRepo roleRepo, LanguageRepo languageRepo,
