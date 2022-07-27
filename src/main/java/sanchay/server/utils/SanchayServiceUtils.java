@@ -380,7 +380,8 @@ public class SanchayServiceUtils
             return true;
 
         if(role.getName().equals(SanchayRole.MANAGER)
-                && currentUser.getCurrentOrganisation().getName().equals(userToAdd.getCurrentOrganisation().getName()))
+                && (currentUser.getCurrentOrganisation().getName().equals(userToAdd.getCurrentOrganisation().getName())
+                && !userToAdd.hasRole(SanchayRole.ROOT)))
             return true;
 
         return false;

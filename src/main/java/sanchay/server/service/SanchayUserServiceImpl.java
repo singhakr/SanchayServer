@@ -1075,7 +1075,8 @@ public class SanchayUserServiceImpl implements SanchayUserService, UserDetailsSe
     {
         log.info("Adding user {}", userDTO.getUsername());
 
-        if(userDTO.getPassword() != null && !userDTO.getPassword().equals(""))
+        if(userDTO.getPassword() != null && !userDTO.getPassword().equals("")
+                && userDTO.isChangePassword())
         {
             user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
         }
@@ -1276,7 +1277,8 @@ public class SanchayUserServiceImpl implements SanchayUserService, UserDetailsSe
         try {
             SanchayBeanUtils.copyPropertiesNotNull(user, userDTO);
 
-            if(userDTO.getPassword() != null && !userDTO.getPassword().equals(""))
+            if(userDTO.getPassword() != null && !userDTO.getPassword().equals("")
+                    && userDTO.isChangePassword())
             {
                 user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
             }
