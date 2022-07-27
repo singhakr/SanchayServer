@@ -523,6 +523,12 @@ public class SanchayUserServiceImpl implements SanchayUserService, UserDetailsSe
 
     public SanchayAnnotationManagementUpdateInfo saveAnnotationManagementUpdateInfo(SanchayAnnotationManagementUpdateInfo annotationManagementUpdateInfo)
     {
+        LinkedHashMap<String, SanchayRole> roleEntitiesToAdd = shallowAddRoles(annotationManagementUpdateInfo);
+        LinkedHashMap<String, SanchayOrganisation> organisationEntitiesToAdd = shallowAddOrganisations(annotationManagementUpdateInfo);
+        LinkedHashMap<String, SanchayResourceLanguage> languageEntitiesToAdd = shallowAddLanguages(annotationManagementUpdateInfo);
+        LinkedHashMap<String, SanchayAnnotationLevel> levelEntitiesToAdd = shallowAddLevels(annotationManagementUpdateInfo);
+        LinkedHashMap<String, SanchayUser> userEntitiesToAdd = shallowAddUsers(annotationManagementUpdateInfo);
+
         log.info("Started saving roles");
 
         Map<String, SanchayRoleDTO> allRoles = new LinkedHashMap<>(annotationManagementUpdateInfo.getAllRoles());
@@ -538,7 +544,7 @@ public class SanchayUserServiceImpl implements SanchayUserService, UserDetailsSe
                             {
                                 log.info("Adding roles");
 
-                                deepAddRole(roleDTO);
+                                deepAddRole(roleDTO, roleEntitiesToAdd.get(roleDTO.getName()));
                             }
                             else if(roleDTO.isToBeDeleted())
                             {
@@ -570,7 +576,7 @@ public class SanchayUserServiceImpl implements SanchayUserService, UserDetailsSe
                             {
                                 log.info("Adding organisations");
 
-                                deepAddOrganisation(organisationDTO);
+                                deepAddOrganisation(organisationDTO, organisationEntitiesToAdd.get(organisationDTO.getName()));
                             }
                             else if(organisationDTO.isToBeDeleted())
                             {
@@ -602,7 +608,7 @@ public class SanchayUserServiceImpl implements SanchayUserService, UserDetailsSe
                             {
                                 log.info("Adding languages");
 
-                                deepAddLanguage(languageDTO);
+                                deepAddLanguage(languageDTO, languageEntitiesToAdd.get(languageDTO.getName()));
                             }
                             else if(languageDTO.isToBeDeleted())
                             {
@@ -634,7 +640,7 @@ public class SanchayUserServiceImpl implements SanchayUserService, UserDetailsSe
                             {
                                 log.info("Adding levels");
 
-                                deepAddAnnotationLevel(levelDTO);
+                                deepAddAnnotationLevel(levelDTO, levelEntitiesToAdd.get(levelDTO.getName()));
                             }
                             else if(levelDTO.isToBeDeleted())
                             {
@@ -666,7 +672,7 @@ public class SanchayUserServiceImpl implements SanchayUserService, UserDetailsSe
                             {
                                 log.info("Adding users");
 
-                                deepAddUser(userDTO);
+                                deepAddUser(userDTO, userEntitiesToAdd.get(userDTO.getUsername()));
                             }
                             else if(userDTO.isToBeDeleted())
                             {
@@ -684,6 +690,196 @@ public class SanchayUserServiceImpl implements SanchayUserService, UserDetailsSe
                 );
 
         return annotationManagementUpdateInfo;
+    }
+
+    private LinkedHashMap<String, SanchayRole> shallowAddRoles(SanchayAnnotationManagementUpdateInfo annotationManagementUpdateInfo)
+    {
+        log.info("Started shallow saving roles");
+
+        Map<String, SanchayRoleDTO> allEntitiesDTO = new LinkedHashMap<>(annotationManagementUpdateInfo.getAllRoles());
+        LinkedHashMap<String, SanchayRole> entitiesToAdd = new LinkedHashMap<>();
+
+        allEntitiesDTO.entrySet()
+                .forEach(
+                        (entry) ->
+                        {
+                            String name = entry.getKey();
+                            SanchayRoleDTO entityDTO = entry.getValue();
+
+                            if(entityDTO.isToBeAdded())
+                            {
+                                log.info("Shallow adding role {}", entityDTO.getName());
+
+                                SanchayRole entity = new SanchayRole();
+
+                                try {
+                                    SanchayBeanUtils.copyPropertiesNotNull(entity, entityDTO);
+                                } catch (InvocationTargetException e) {
+                                    throw new RuntimeException(e);
+                                } catch (IllegalAccessException e) {
+                                    throw new RuntimeException(e);
+                                }
+
+                                roleRepo.save(entity);
+
+                                entitiesToAdd.put(entityDTO.getName(), entity);
+                            }
+                        }
+                );
+
+        return entitiesToAdd;
+    }
+
+    private LinkedHashMap<String, SanchayOrganisation> shallowAddOrganisations(SanchayAnnotationManagementUpdateInfo annotationManagementUpdateInfo)
+    {
+        log.info("Started shallow saving organisations");
+
+        Map<String, SanchayOrganisationDTO> allEntitiesDTO = new LinkedHashMap<>(annotationManagementUpdateInfo.getAllOrganisations());
+        LinkedHashMap<String, SanchayOrganisation> entitiesToAdd = new LinkedHashMap<>();
+
+        allEntitiesDTO.entrySet()
+                .forEach(
+                        (entry) ->
+                        {
+                            String name = entry.getKey();
+                            SanchayOrganisationDTO entityDTO = entry.getValue();
+
+                            if(entityDTO.isToBeAdded())
+                            {
+                                log.info("Shallow adding organisation {}", entityDTO.getName());
+
+                                SanchayOrganisation entity = new SanchayOrganisation();
+
+                                try {
+                                    SanchayBeanUtils.copyPropertiesNotNull(entity, entityDTO);
+                                } catch (InvocationTargetException e) {
+                                    throw new RuntimeException(e);
+                                } catch (IllegalAccessException e) {
+                                    throw new RuntimeException(e);
+                                }
+
+                                organisationRepo.save(entity);
+
+                                entitiesToAdd.put(entityDTO.getName(), entity);
+                            }
+                        }
+                );
+
+        return entitiesToAdd;
+    }
+
+    private LinkedHashMap<String, SanchayResourceLanguage> shallowAddLanguages(SanchayAnnotationManagementUpdateInfo annotationManagementUpdateInfo)
+    {
+        log.info("Started shallow saving languages");
+
+        Map<String, SanchayResourceLanguageDTO> allEntitiesDTO = new LinkedHashMap<>(annotationManagementUpdateInfo.getAllLanguages());
+        LinkedHashMap<String, SanchayResourceLanguage> entitiesToAdd = new LinkedHashMap<>();
+
+        allEntitiesDTO.entrySet()
+                .forEach(
+                        (entry) ->
+                        {
+                            String name = entry.getKey();
+                            SanchayResourceLanguageDTO entityDTO = entry.getValue();
+
+                            if(entityDTO.isToBeAdded())
+                            {
+                                log.info("Shallow adding language {}", entityDTO.getName());
+
+                                SanchayResourceLanguage entity = new SanchayResourceLanguage();
+
+                                try {
+                                    SanchayBeanUtils.copyPropertiesNotNull(entity, entityDTO);
+                                } catch (InvocationTargetException e) {
+                                    throw new RuntimeException(e);
+                                } catch (IllegalAccessException e) {
+                                    throw new RuntimeException(e);
+                                }
+
+                                languageRepo.save(entity);
+
+                                entitiesToAdd.put(entityDTO.getName(), entity);
+                            }
+                        }
+                );
+
+        return entitiesToAdd;
+    }
+
+    private LinkedHashMap<String, SanchayAnnotationLevel> shallowAddLevels(SanchayAnnotationManagementUpdateInfo annotationManagementUpdateInfo)
+    {
+        log.info("Started shallow saving level");
+
+        Map<String, SanchayAnnotationLevelDTO> allEntitiesDTO = new LinkedHashMap<>(annotationManagementUpdateInfo.getAllLevels());
+        LinkedHashMap<String, SanchayAnnotationLevel> entitiesToAdd = new LinkedHashMap<>();
+
+        allEntitiesDTO.entrySet()
+                .forEach(
+                        (entry) ->
+                        {
+                            String name = entry.getKey();
+                            SanchayAnnotationLevelDTO entityDTO = entry.getValue();
+
+                            if(entityDTO.isToBeAdded())
+                            {
+                                log.info("Shallow adding level {}", entityDTO.getName());
+
+                                SanchayAnnotationLevel entity = new SanchayAnnotationLevel();
+
+                                try {
+                                    SanchayBeanUtils.copyPropertiesNotNull(entity, entityDTO);
+                                } catch (InvocationTargetException e) {
+                                    throw new RuntimeException(e);
+                                } catch (IllegalAccessException e) {
+                                    throw new RuntimeException(e);
+                                }
+
+                                annotationLevelRepo.save(entity);
+
+                                entitiesToAdd.put(entityDTO.getName(), entity);
+                            }
+                        }
+                );
+
+        return entitiesToAdd;
+    }
+
+    private LinkedHashMap<String, SanchayUser> shallowAddUsers(SanchayAnnotationManagementUpdateInfo annotationManagementUpdateInfo)
+    {
+        log.info("Started shallow saving user");
+
+        Map<String, SanchayUserDTO> allEntitiesDTO = new LinkedHashMap<>(annotationManagementUpdateInfo.getAllUsers());
+        LinkedHashMap<String, SanchayUser> entitiesToAdd = new LinkedHashMap<>();
+
+        allEntitiesDTO.entrySet()
+                .forEach(
+                        (entry) ->
+                        {
+                            String name = entry.getKey();
+                            SanchayUserDTO entityDTO = entry.getValue();
+
+                            if(entityDTO.isToBeAdded())
+                            {
+                                log.info("Shallow adding user {}", entityDTO.getUsername());
+
+                                SanchayUser entity = new SanchayUser();
+
+                                try {
+                                    SanchayBeanUtils.copyPropertiesNotNull(entity, entityDTO);
+                                } catch (InvocationTargetException e) {
+                                    throw new RuntimeException(e);
+                                } catch (IllegalAccessException e) {
+                                    throw new RuntimeException(e);
+                                }
+
+                                userRepo.save(entity);
+
+                                entitiesToAdd.put(entityDTO.getUsername(), entity);
+                            }
+                        }
+                );
+
+        return entitiesToAdd;
     }
 
     @Override
@@ -875,23 +1071,13 @@ public class SanchayUserServiceImpl implements SanchayUserService, UserDetailsSe
 //        role.getPrivileges().add(privilege);
 //    }
 
-    private void deepAddUser(SanchayUserDTO userDTO)
+    private void deepAddUser(SanchayUserDTO userDTO, SanchayUser user)
     {
         log.info("Adding user {}", userDTO.getUsername());
 
-        SanchayUser user = new SanchayUser();
-
-        try {
-            SanchayBeanUtils.copyPropertiesNotNull(user, userDTO);
-
-            if(userDTO.getPassword() != null && !userDTO.getPassword().equals(""))
-            {
-                user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
-            }
-        } catch (InvocationTargetException e) {
-            throw new RuntimeException(e);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
+        if(userDTO.getPassword() != null && !userDTO.getPassword().equals(""))
+        {
+            user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
         }
 
         Map<String, SanchayRoleSlimDTO> roleSlimDTOMap = new LinkedHashMap<>(userDTO.getRoles());
@@ -946,19 +1132,9 @@ public class SanchayUserServiceImpl implements SanchayUserService, UserDetailsSe
         userRepo.save(user);
     }
 
-    private void deepAddRole(SanchayRoleDTO roleDTO)
+    private void deepAddRole(SanchayRoleDTO roleDTO, SanchayRole role)
     {
-        SanchayRole role = new SanchayRole();
-
         log.info("Adding role {}", roleDTO.getName());
-
-        try {
-            SanchayBeanUtils.copyPropertiesNotNull(role, roleDTO);
-        } catch (InvocationTargetException e) {
-            throw new RuntimeException(e);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
 
         Map<String, SanchayUserSlimDTO> userSlimDTOMap = new LinkedHashMap<>(roleDTO.getUsers());
 
@@ -976,19 +1152,9 @@ public class SanchayUserServiceImpl implements SanchayUserService, UserDetailsSe
         roleRepo.save(role);
     }
 
-    private void deepAddOrganisation(SanchayOrganisationDTO organisationDTO)
+    private void deepAddOrganisation(SanchayOrganisationDTO organisationDTO, SanchayOrganisation organisation)
     {
-        SanchayOrganisation organisation = new SanchayOrganisation();
-
         log.info("Adding organisation {}", organisationDTO.getName());
-
-        try {
-            SanchayBeanUtils.copyPropertiesNotNull(organisation, organisationDTO);
-        } catch (InvocationTargetException e) {
-            throw new RuntimeException(e);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
 
         Map<String, SanchayUserSlimDTO> userSlimDTOMap = new LinkedHashMap<>(organisationDTO.getUsers());
 
@@ -1006,19 +1172,9 @@ public class SanchayUserServiceImpl implements SanchayUserService, UserDetailsSe
         organisationRepo.save(organisation);
     }
 
-    private void deepAddLanguage(SanchayResourceLanguageDTO resourceLanguageDTO)
+    private void deepAddLanguage(SanchayResourceLanguageDTO resourceLanguageDTO, SanchayResourceLanguage language)
     {
-        SanchayResourceLanguage language = new SanchayResourceLanguage();
-
         log.info("Adding language {}", resourceLanguageDTO.getName());
-
-        try {
-            SanchayBeanUtils.copyPropertiesNotNull(language, resourceLanguageDTO);
-        } catch (InvocationTargetException e) {
-            throw new RuntimeException(e);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
 
         Map<String, SanchayUserSlimDTO> userSlimDTOMap = new LinkedHashMap<>(resourceLanguageDTO.getUsers());
 
@@ -1036,19 +1192,9 @@ public class SanchayUserServiceImpl implements SanchayUserService, UserDetailsSe
         languageRepo.save(language);
     }
 
-    private void deepAddAnnotationLevel(SanchayAnnotationLevelDTO levelDTO)
+    private void deepAddAnnotationLevel(SanchayAnnotationLevelDTO levelDTO, SanchayAnnotationLevel annotationLevel)
     {
-        SanchayAnnotationLevel annotationLevel = new SanchayAnnotationLevel();
-
         log.info("Adding levels {}", levelDTO.getName());
-
-        try {
-            SanchayBeanUtils.copyPropertiesNotNull(annotationLevel, levelDTO);
-        } catch (InvocationTargetException e) {
-            throw new RuntimeException(e);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
 
         Map<String, SanchayUserSlimDTO> userSlimDTOMap = new LinkedHashMap<>(levelDTO.getUsers());
 
