@@ -1,6 +1,7 @@
 package sanchay.server.security;
 
 import sanchay.common.SanchaySpringServerEndPoints;
+import sanchay.server.SanchayServerApplication;
 import sanchay.server.filter.SanchayAuthenticationFilter;
 import sanchay.server.filter.SanchayAuthorizationFilter;
 import lombok.RequiredArgsConstructor;
@@ -39,7 +40,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf().disable();
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.authorizeRequests().antMatchers(SanchaySpringServerEndPoints.AUTH_BASE + SanchaySpringServerEndPoints.LOGIN + "/**",
-                SanchaySpringServerEndPoints.AUTH_BASE + SanchaySpringServerEndPoints.TOKEN_REFRESH + "/**").permitAll();
+                SanchaySpringServerEndPoints.AUTH_BASE + SanchaySpringServerEndPoints.TOKEN_REFRESH + "/**",
+                SanchaySpringServerEndPoints.HOME + "/**").permitAll();
         http.authorizeRequests().antMatchers(GET, "/api/user/**").hasAnyAuthority("ROLE_USER");
         http.authorizeRequests().antMatchers(POST, "/api/user/save/**").hasAnyAuthority("ROLE_USER");
         http.authorizeRequests().anyRequest().authenticated();

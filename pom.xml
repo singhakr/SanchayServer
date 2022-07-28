@@ -103,6 +103,39 @@
 			<artifactId>hibernate-validator</artifactId>
 			<version>6.2.3.Final</version>
 		</dependency>
+		<dependency>
+			<groupId>org.thymeleaf</groupId>
+			<artifactId>thymeleaf</artifactId>
+			<version>3.0.11.RELEASE</version>
+		</dependency>
+		<dependency>
+			<groupId>org.thymeleaf</groupId>
+			<artifactId>thymeleaf-spring5</artifactId>
+			<version>3.0.11.RELEASE</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-thymeleaf</artifactId>
+			<version>2.3.3.RELEASE</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.eclipse.egit/org.eclipse.egit -->
+		<!-- https://mvnrepository.com/artifact/org.eclipse.egit/org.eclipse.egit -->
+		<!-- https://mvnrepository.com/artifact/org.eclipse.mylyn.github/org.eclipse.egit.github.core -->
+		<!-- https://mvnrepository.com/artifact/org.eclipse.egit/org.eclipse.egit.ui -->
+		<!-- https://mvnrepository.com/artifact/org.eclipse.egit/org.eclipse.egit.mylyn.ui -->
+		<!-- https://mvnrepository.com/artifact/org.eclipse.egit/org.eclipse.egit.ui -->
+		<!-- https://mvnrepository.com/artifact/org.eclipse.egit/org.eclipse.egit.ui -->
+		<dependency>
+			<groupId>org.eclipse.mylyn.github</groupId>
+			<artifactId>org.eclipse.egit.github.core</artifactId>
+			<version>2.1.5</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.eclipse.jgit/org.eclipse.jgit -->
+		<dependency>
+			<groupId>org.eclipse.jgit</groupId>
+			<artifactId>org.eclipse.jgit</artifactId>
+			<version>6.2.0.202206071550-r</version>
+		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.hibernate/hibernate-annotations -->
 		<dependency>
 			<groupId>sanchay.server.dto</groupId>

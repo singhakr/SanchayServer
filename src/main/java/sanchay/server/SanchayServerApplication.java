@@ -4,7 +4,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -19,7 +21,7 @@ import java.util.Properties;
 @EnableConfigurationProperties
 @SpringBootApplication
 @Slf4j
-public class SanchayServerApplication {
+public class SanchayServerApplication extends SpringBootServletInitializer {
 
 	public static String SANCHAY_CONFIG_PATH;
 	public static String SANCHAY_CONFIG_FILENAME = "sanchay-server-config.txt";
@@ -29,6 +31,10 @@ public class SanchayServerApplication {
 		SpringApplication.run(SanchayServerApplication.class, args);
 	}
 
+	@Override
+	protected SpringApplicationBuilder configure(SpringApplicationBuilder builder) {
+		return builder.sources(SanchayServerApplication.class);
+	}
 	@Bean
 	PasswordEncoder passwordEncoder()
 	{
