@@ -15,10 +15,36 @@
 	<name>SanchayServer</name>
 	<description>Demo project for Spring Boot JWT Security</description>
 	<properties>
-		<java.version>17</java.version>
+        <version.bootable.jar>1.0.0.Final</version.bootable.jar>
+        <version.wildfly>26.1.1.Final</version.wildfly>
+        <plugin.fork.embedded>true</plugin.fork.embedded>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <failOnMissingWebXml>false</failOnMissingWebXml>
+        <version.server.bom>${version.wildfly}</version.server.bom>
+        <java.version>17</java.version>
+		<deploy.wildfly.host>127.0.0.1</deploy.wildfly.host>
+		<deploy.wildfly.port>9990</deploy.wildfly.port>
+		<deploy.wildfly.username>wildfly</deploy.wildfly.username>
+		<deploy.wildfly.password>w1ldFly!</deploy.wildfly.password>
+		<start-class>sanchay.server.SanchayServerApplication</start-class>
 	</properties>
 	<dependencies>
+		<!-- https://mvnrepository.com/artifact/jakarta.platform/jakarta.jakartaee-api -->
 		<dependency>
+			<groupId>jakarta.platform</groupId>
+			<artifactId>jakarta.jakartaee-api</artifactId>
+			<version>8.0.0</version>
+			<scope>provided</scope>
+		</dependency>
+        <dependency>
+            <groupId>jakarta.xml.bind</groupId>
+            <artifactId>jakarta.xml.bind-api</artifactId>
+            <version>2.3.3</version>
+        </dependency>
+        <dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
 		</dependency>
@@ -29,6 +55,12 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-api</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<dependency>
@@ -149,9 +181,65 @@
 	<build>
 		<plugins>
 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>3.3.2</version>
+				<configuration>
+					<failOnMissingWebXml>true</failOnMissingWebXml>
+					<webResources>
+						<!--resource>
+							<directory>${project.basedir}/src/main/resources/SanchayServerDTO-1.0-SNAPSHOT.jar</directory>
+							<targetPath>WEB-INF/lib</targetPath>
+						</resource-->
+					</webResources>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.wildfly.plugins</groupId>
+				<artifactId>wildfly-maven-plugin</artifactId>
+				<version>3.0.2.Final</version>
+				<executions>
+					<execution>
+						<phase>install</phase>
+						<goals>
+							<goal>deploy</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<filename>${project.build.finalName}.war</filename>
+					<hostname>${deploy.wildfly.host}</hostname>
+					<port>${deploy.wildfly.port}</port>
+					<username>${deploy.wildfly.username}</username>
+					<password>${deploy.wildfly.password}</password>
+				</configuration>
+			</plugin>
+			<!--plugin>
+				<groupId>org.wildfly.plugins</groupId>
+				<artifactId>wildfly-jar-maven-plugin</artifactId>
+				<version>7.0.2.Final</version>
+				<configuration>
+					<feature-pack-location>wildfly@maven(org.jboss.universe:community-universe)#26.1.1.Final</feature-pack-location>
+					<layers>
+						<layer>jaxrs</layer>
+					</layers>
+					<excluded-layers>
+						<layer>deployment-scanner</layer>
+					</excluded-layers>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>package</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin-->
+			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
+					<mainClass>sanchay.server.SanchayServerApplication</mainClass>
 					<excludes>
 						<exclude>
 							<groupId>org.projectlombok</groupId>
@@ -160,6 +248,21 @@
 					</excludes>
 				</configuration>
 			</plugin>
+			<!--plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<version>3.3.0</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+						<configuration>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin-->
 		</plugins>
 	</build>
 
