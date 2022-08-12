@@ -4,18 +4,26 @@ import java.util.Map;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.modelmapper.ModelMapper;
+import org.springframework.http.ResponseEntity;
 import sanchay.server.dao.auth.model.domain.*;
 import sanchay.server.dto.auth.model.domain.*;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 public interface SanchayUserService {
 //    SanchayDeepModelMapper getDeepModelMapper();
 //    SanchayModelMapper getModelMapper();
+    boolean isDatabaseEmtpy();
+    void clearDatabase();
     ModelMapper getModelMapper();
     ObjectMapper getPlainObjectMapper();
 //    ObjectMapper getPolymorphicObjectMapper();
     SanchayUserDTO getUserDTO(String username, boolean serverSide);
     SanchayUser getUser(String username, boolean serverSide);
-    Map<String, SanchayUserDTO> getAllUsers();
+    Boolean doesUserExist(String username);
+    Boolean doesEmailExist(String email);
+    Map<String, SanchayUserDTO> getAllUsers(boolean serverSide);
     Map<String, SanchayRoleDTO> getAllRoles();
     Map<String, SanchayResourceLanguageDTO> getAllLanguages();
     Map<String, SanchayOrganisationDTO> getAllOrganisations();

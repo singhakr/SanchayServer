@@ -12,6 +12,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 import org.springframework.web.filter.OncePerRequestFilter;
 import sanchay.common.SanchaySpringServerEndPoints;
+import sanchay.server.security.SachayServerSecretKeyManager;
+import sanchay.server.utils.SanchaySecurityUtils;
+import sanchay.server.utils.SanchayServerUtils;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -30,6 +33,9 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @Slf4j
 public class SanchayAuthorizationFilter extends OncePerRequestFilter {
+
+    private static SachayServerSecretKeyManager sachayServerSecretKeyManager = SanchaySecurityUtils.getSachayServerSecretKeyManagerInstace();
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         if(request.getServletPath().equals(SanchaySpringServerEndPoints.AUTH_BASE + SanchaySpringServerEndPoints.LOGIN)
@@ -44,7 +50,9 @@ public class SanchayAuthorizationFilter extends OncePerRequestFilter {
             {
                 try {
                     String token = authorizationHeader.substring("Bearer ".length());
-                    Algorithm algorithm = Algorithm.HMAC256("secret".getBytes());
+//                    Algorithm algorithm = Algorithm.HMAC256("secret".getBytes());
+//                    Algorithm algorithm = Algorithm.HMAC256(sachayServerSecretKeyManager.getSecretKey().getBytes());
+                    Algorithm algorithm = Algorithm.HMAC256(SanchayServerUtils.getApplicationProperty(SachayServerSecretKeyManager.getSecretKeyPropertyName()).getBytes());
                     JWTVerifier verifier = JWT.require(algorithm).build();
                     DecodedJWT decodedJWT = verifier.verify(token);
                     String username = decodedJWT.getSubject();

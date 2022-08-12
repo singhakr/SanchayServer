@@ -11,6 +11,9 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import sanchay.server.security.SachayServerSecretKeyManager;
+import sanchay.server.utils.SanchaySecurityUtils;
+import sanchay.server.utils.SanchayServerUtils;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -29,6 +32,8 @@ public class SanchayAuthenticationFilter extends UsernamePasswordAuthenticationF
 
     private final AuthenticationManager authenticationManager;
 
+    private static SachayServerSecretKeyManager sachayServerSecretKeyManager = SanchaySecurityUtils.getSachayServerSecretKeyManagerInstace();
+
     public SanchayAuthenticationFilter(AuthenticationManager authenticationManager)
     {
         this.authenticationManager = authenticationManager;
@@ -40,7 +45,9 @@ public class SanchayAuthenticationFilter extends UsernamePasswordAuthenticationF
 //        super.successfulAuthentication(request, response, chain, authResult);
         User user = (User) authentication.getPrincipal();
 
-        Algorithm algorithm = Algorithm.HMAC256("secret".getBytes());
+//        Algorithm algorithm = Algorithm.HMAC256("secret".getBytes());
+//        Algorithm algorithm = Algorithm.HMAC256(sachayServerSecretKeyManager.getSecretKey().getBytes());
+        Algorithm algorithm = Algorithm.HMAC256(SanchayServerUtils.getApplicationProperty(SachayServerSecretKeyManager.getSecretKeyPropertyName()).getBytes());
 
         String access_token = JWT.create()
                 .withSubject(user.getUsername())

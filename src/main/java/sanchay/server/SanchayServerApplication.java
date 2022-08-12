@@ -53,9 +53,197 @@ public class SanchayServerApplication extends SpringBootServletInitializer {
 
 			log.info("Loaded properties file {}.", SANCHAY_CONFIG_PATH);
 			log.info("Sanchay annotation shared folder is: {}", SANCHAY_CONFIG_PROPERTIES.getProperty("SHARED_ANNOTATION_FOLDER"));
+
+			if(userService.isDatabaseEmtpy())
+			{
+				userService.clearDatabase();
+
+//				initSampleData(userService);
+				initDefaultData(userService);
+			}
+
 //			initSampleData(userService);
 //			initSampleDataExt(userService);
  		};
+	}
+
+	private void initDefaultData(SanchayUserService userService)
+	{
+//		SanchayResourceLanguage language = new SanchayResourceLanguage();
+//		language.setName("Assamese");
+//		userService.saveLanguage(language, true);
+//
+//		language = new SanchayResourceLanguage();
+//		language.setName("Bengali");
+//		userService.saveLanguage(language, true);
+//
+//		language = new SanchayResourceLanguage();
+//		language.setName("Gujarati");
+//		userService.saveLanguage(language, true);
+//
+//		language = new SanchayResourceLanguage();
+//		language.setName("Dogri");
+//		userService.saveLanguage(language, true);
+//
+//		language = new SanchayResourceLanguage();
+//		language.setName("Kannada");
+//		userService.saveLanguage(language, true);
+//
+//		language = new SanchayResourceLanguage();
+//		language.setName("Kashmiri");
+//		userService.saveLanguage(language, true);
+//
+//		language = new SanchayResourceLanguage();
+//		language.setName("Konkani");
+//		userService.saveLanguage(language, true);
+//
+//		language = new SanchayResourceLanguage();
+//		language.setName("Malayalam");
+//		userService.saveLanguage(language, true);
+//
+//		language = new SanchayResourceLanguage();
+//		language.setName("Manipuri");
+//		userService.saveLanguage(language, true);
+//
+//		language = new SanchayResourceLanguage();
+//		language.setName("Marathi");
+//		userService.saveLanguage(language, true);
+//
+//		language = new SanchayResourceLanguage();
+//		language.setName("Nepali");
+//		userService.saveLanguage(language, true);
+//
+//		language = new SanchayResourceLanguage();
+//		language.setName("Odiya");
+//		userService.saveLanguage(language, true);
+//
+//		language = new SanchayResourceLanguage();
+//		language.setName("Punjabi");
+//		userService.saveLanguage(language, true);
+//
+//		language = new SanchayResourceLanguage();
+//		language.setName("Sanskrit");
+//		userService.saveLanguage(language, true);
+//
+//		language = new SanchayResourceLanguage();
+//		language.setName("Sindhi");
+//		userService.saveLanguage(language, true);
+//
+//		language = new SanchayResourceLanguage();
+//		language.setName("Tamil");
+//		userService.saveLanguage(language, true);
+//
+//		language = new SanchayResourceLanguage();
+//		language.setName("Telugu");
+//		userService.saveLanguage(language, true);
+//
+//		language = new SanchayResourceLanguage();
+//		language.setName("Urdu");
+//		userService.saveLanguage(language, true);
+//
+//		language = new SanchayResourceLanguage();
+//		language.setName("Bodo");
+//		userService.saveLanguage(language, true);
+//
+//		language = new SanchayResourceLanguage();
+//		language.setName("Santhali");
+//		userService.saveLanguage(language, true);
+//
+//		language = new SanchayResourceLanguage();
+//		language.setName("Maithili");
+//		userService.saveLanguage(language, true);
+
+		SanchayResourceLanguage language = new SanchayResourceLanguage();
+		language.setName("Hindi");
+		userService.saveLanguage(language, true);
+
+		SanchayOrganisation organisation = new SanchayOrganisation();
+		organisation.setName("IIIT-H");
+		organisation.setLongName("IIIT-Hyderabad");
+		userService.saveOrganisation(organisation, true);
+
+//		SanchayAnnotationLevel annotationLevel = new SanchayAnnotationLevel();
+//		annotationLevel.setName(AnnotationLevelType.RAW_TEXT.toString());
+//		userService.saveAnnotationLevel(annotationLevel, true);
+//
+//		annotationLevel = new SanchayAnnotationLevel();
+//		annotationLevel.setName(AnnotationLevelType.TOKENIZED_TEXT.toString());
+//		userService.saveAnnotationLevel(annotationLevel, true);
+
+		SanchayAnnotationLevel annotationLevel = new SanchayAnnotationLevel();
+		annotationLevel.setName(AnnotationLevelType.POS_TAGGED.toString());
+		userService.saveAnnotationLevel(annotationLevel, true);
+
+//		annotationLevel = new SanchayAnnotationLevel();
+//		annotationLevel.setName(AnnotationLevelType.MORPH_ANALYZED.toString());
+//		userService.saveAnnotationLevel(annotationLevel, true);
+//
+//		annotationLevel = new SanchayAnnotationLevel();
+//		annotationLevel.setName(AnnotationLevelType.CHUNK_TAGGED.toString());
+//		userService.saveAnnotationLevel(annotationLevel, true);
+//
+//		annotationLevel = new SanchayAnnotationLevel();
+//		annotationLevel.setName(AnnotationLevelType.PS_TREE_ANNOTATED.toString());
+//		userService.saveAnnotationLevel(annotationLevel, true);
+//
+//		annotationLevel = new SanchayAnnotationLevel();
+//		annotationLevel.setName(AnnotationLevelType.DEPENDENCY_ANNOTATED.toString());
+//		userService.saveAnnotationLevel(annotationLevel, true);
+//
+//		annotationLevel = new SanchayAnnotationLevel();
+//		annotationLevel.setName(AnnotationLevelType.ANAPHORA_ANNOTATED.toString());
+//		userService.saveAnnotationLevel(annotationLevel, true);
+//
+//		annotationLevel = new SanchayAnnotationLevel();
+//		annotationLevel.setName(AnnotationLevelType.WORD_SENSE_TAGGED.toString());
+//		userService.saveAnnotationLevel(annotationLevel, true);
+//
+//		annotationLevel = new SanchayAnnotationLevel();
+//		annotationLevel.setName(AnnotationLevelType.NAMED_ENTITY_TAGGED.toString());
+//		userService.saveAnnotationLevel(annotationLevel, true);
+//
+//		annotationLevel = new SanchayAnnotationLevel();
+//		annotationLevel.setName(AnnotationLevelType.DISCOURSE_TAGGED.toString());
+//		userService.saveAnnotationLevel(annotationLevel, true);
+
+		SanchayRole viewerRole = new SanchayRole();
+		viewerRole.setName(SanchayRole.VIEWER);
+		userService.saveRole(viewerRole, true);
+
+		SanchayRole annotatorRole = new SanchayRole();
+		annotatorRole.setName(SanchayRole.ANNOTATOR);
+		userService.saveRole(annotatorRole, true);
+
+		SanchayRole validatorRole = new SanchayRole();
+		validatorRole.setName(SanchayRole.VALIDATOR);
+		userService.saveRole(validatorRole, true);
+
+		SanchayRole managerRole = new SanchayRole();
+		managerRole.setName(SanchayRole.MANAGER);
+		userService.saveRole(managerRole, true);
+
+		SanchayRole rootRole = new SanchayRole();
+		rootRole.setName(SanchayRole.ROOT);
+		userService.saveRole(rootRole, true);
+
+		SanchayUser user = new SanchayUser();
+		user.setUsername("admin");
+		user.setFirstName("Pruthwik");
+		user.setLastName("Mishra");
+		user.setPassword("1234");
+		user.addRole(rootRole);
+		user.addRole(managerRole);
+		user.addRole(validatorRole);
+		user.addRole(annotatorRole);
+		user.addRole(viewerRole);
+		user.addLanguage(language);
+		user.addOrganisation(organisation);
+		user.addAnnotationLevel(annotationLevel);
+		user.setCurrentRoleName(SanchayRole.ROOT);
+		user.setCurrentLanguageName(language.getName());
+		user.setCurrentOrganisationName(organisation.getName());
+		user.setCurrentAnnotationLevelName(annotationLevel.getName());
+		userService.saveUser(user, true);
 	}
 
 	private void initSampleDataExt(SanchayUserService userService)

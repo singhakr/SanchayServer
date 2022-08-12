@@ -15,7 +15,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import sanchay.server.dao.auth.model.domain.*;
 import sanchay.server.dto.auth.model.domain.*;
+import sanchay.server.security.SachayServerSecretKeyManager;
 import sanchay.server.service.SanchayUserService;
+import sanchay.server.utils.SanchaySecurityUtils;
+import sanchay.server.utils.SanchayServerUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -38,6 +41,8 @@ public class SanchayUserController {
 
     //    private final MapStructMapper mapstructMapper;;
     private final SanchayUserService userService;
+
+    private static SachayServerSecretKeyManager sachayServerSecretKeyManager = SanchaySecurityUtils.getSachayServerSecretKeyManagerInstace();
 
 //    @Autowired
 //    public SanchayUserController(ModelMapper modelMapper) {
@@ -90,6 +95,18 @@ public class SanchayUserController {
         return ResponseEntity.ok().body(userService.getUser(request.getParameter("username"), false));
     }
 
+    @PostMapping("/doesUserExist")
+    public ResponseEntity<Boolean> doesUserExist(HttpServletRequest request, HttpServletResponse response)
+    {
+        return ResponseEntity.ok().body(userService.doesUserExist(request.getParameter("username")));
+    }
+
+    @PostMapping("/doesEmailExist")
+    public ResponseEntity<Boolean> doesEmailExist(HttpServletRequest request, HttpServletResponse response)
+    {
+        return ResponseEntity.ok().body(userService.doesUserExist(request.getParameter("email")));
+    }
+
     @PostMapping("/users")
     public ResponseEntity<Map<String, SanchayUserDTO>> getAllUsers()
 //    public ResponseEntity<String> getAllUsers()
@@ -97,7 +114,7 @@ public class SanchayUserController {
     {
 //        ObjectMapper mapper = new ObjectMapper();
 
-        Map<String, SanchayUserDTO> userDTOMap = userService.getAllUsers();
+        Map<String, SanchayUserDTO> userDTOMap = userService.getAllUsers(false);
 
         return ResponseEntity.ok().body(userDTOMap);
 
@@ -511,7 +528,9 @@ public class SanchayUserController {
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             try {
                 String refresh_token = authorizationHeader.substring("Bearer ".length());
-                Algorithm algorithm = Algorithm.HMAC256("secret".getBytes());
+//                Algorithm algorithm = Algorithm.HMAC256("secret".getBytes());
+//                Algorithm algorithm = Algorithm.HMAC256(sachayServerSecretKeyManager.getSecretKey().getBytes());
+                Algorithm algorithm = Algorithm.HMAC256(SanchayServerUtils.getApplicationProperty(SachayServerSecretKeyManager.getSecretKeyPropertyName()).getBytes());
                 JWTVerifier verifier = JWT.require(algorithm).build();
                 DecodedJWT decodedJWT = verifier.verify(refresh_token);
                 String username = decodedJWT.getSubject();

@@ -247,17 +247,17 @@ public class SanchayServiceUtils
         return map;
     }
 
-    public static Map<String, SanchayUser> getAllUsers(UserRepo userRepo, SanchayUser user)
+    public static Map<String, SanchayUser> getAllUsers(UserRepo userRepo, SanchayUser user, boolean serverSide)
     {
         Map<String, SanchayUser> userMap = new LinkedHashMap<>();
 
         SanchayRole role = user.getCurrentRole();
 
-        if(role.getName().equals(SanchayRole.VIEWER) || role.getName().equals(SanchayRole.ANNOTATOR))
+        if(!serverSide && role.getName().equals(SanchayRole.VIEWER) || role.getName().equals(SanchayRole.ANNOTATOR))
         {
             userMap.put(user.getUsername(), user);
         }
-        else if(role.getName().equals(SanchayRole.VALIDATOR))
+        else if(!serverSide && role.getName().equals(SanchayRole.VALIDATOR))
         {
             SanchayResourceLanguage userLanguage = user.getCurrentLanguage();
             Map<String, SanchayUser> usersForLanguage = userLanguage.getUsers();
@@ -272,14 +272,14 @@ public class SanchayServiceUtils
 
             userMap = (Map<String, SanchayUser>) getMapIntersection(userMap, usersForOrganisation);
         }
-        else if(role.getName().equals(SanchayRole.MANAGER))
+        else if(!serverSide && role.getName().equals(SanchayRole.MANAGER))
         {
             SanchayOrganisation userOrganisation = user.getCurrentOrganisation();
             Map<String, SanchayUser> usersForOrganisation = userOrganisation.getUsers();
 
             userMap = usersForOrganisation;
         }
-        else if(role.getName().equals(SanchayRole.ROOT))
+        else if(serverSide || role.getName().equals(SanchayRole.ROOT))
         {
             userMap = (Map<String, SanchayUser>) listToMap(userRepo.findAll());
         }

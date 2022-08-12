@@ -13,6 +13,26 @@ import java.util.Map;
 import java.util.Properties;
 
 public class SanchayServerUtils {
+
+    private static final Properties applicationProperties;
+
+    static {
+        applicationProperties = new Properties();
+
+        try {
+            ClassLoader classLoader = SanchayServerUtils.class.getClassLoader();
+            InputStream applicationPropertiesStream = classLoader.getResourceAsStream("application.properties");
+            applicationProperties.load(applicationPropertiesStream);
+        } catch (Exception e) {
+            // process the exception
+        }
+    }
+
+    public static String getApplicationProperty(String propertyName)
+    {
+        return applicationProperties.getProperty(propertyName);
+    }
+
     public static Properties loadPropertiesFile(String propertiesPath) {
         Properties properties = null;
         try (InputStream input = new FileInputStream(propertiesPath)) {

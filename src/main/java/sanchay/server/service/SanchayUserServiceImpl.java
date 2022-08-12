@@ -55,6 +55,35 @@ public class SanchayUserServiceImpl implements SanchayUserService, UserDetailsSe
 //        return deepModelMapper;
 //    }
 
+    public boolean isDatabaseEmtpy()
+    {
+        if(userRepo.findAll().isEmpty())
+            return true;
+
+        if(roleRepo.findAll().isEmpty())
+            return true;
+
+        if(organisationRepo.findAll().isEmpty())
+            return true;
+
+        if(languageRepo.findAll().isEmpty())
+            return true;
+
+        if(annotationLevelRepo.findAll() == null || annotationLevelRepo.findAll().isEmpty())
+            return true;
+
+        return false;
+    }
+
+    public void clearDatabase()
+    {
+        userRepo.deleteAll();
+        roleRepo.deleteAll();
+        organisationRepo.deleteAll();
+        languageRepo.deleteAll();
+        annotationLevelRepo.deleteAll();
+    }
+
     public ModelMapper getModelMapper()
 //    public SanchayModelMapper getModelMapper()
     {
@@ -142,6 +171,32 @@ public class SanchayUserServiceImpl implements SanchayUserService, UserDetailsSe
         return null;
     }
 
+    public Boolean doesUserExist(String username)
+    {
+        if(userRepo.findByUsername(username) != null)
+        {
+            return Boolean.TRUE;
+        }
+
+        return Boolean.FALSE;
+    }
+
+    public Boolean doesEmailExist(String email)
+    {
+        Map<String, SanchayUserDTO> allUsers = getAllUsers(true);
+
+        Optional<Map.Entry<String, SanchayUserDTO>> invalidDTOEntry = allUsers.entrySet().stream().filter(
+                (entry) ->
+                        (entry.getValue().getEmailAddress().equals(email))
+        ).findFirst();
+
+        if(invalidDTOEntry.isPresent()) {
+            return Boolean.TRUE;
+        }
+
+        return Boolean.FALSE;
+    }
+
     @Override
     public SanchayUserDTO getUserDTO(String username, boolean serverSide) {
 
@@ -159,10 +214,10 @@ public class SanchayUserServiceImpl implements SanchayUserService, UserDetailsSe
     }
 
     @Override
-    public Map<String, SanchayUserDTO> getAllUsers() {
+    public Map<String, SanchayUserDTO> getAllUsers(boolean serverSide) {
         log.info("Fetching all users");
 
-        Map<String, SanchayUser> userMap = SanchayServiceUtils.getAllUsers(userRepo, getCurrentUser());
+        Map<String, SanchayUser> userMap = SanchayServiceUtils.getAllUsers(userRepo, getCurrentUser(), serverSide);
 
         Map<String, SanchayUserDTO> userDTOMap = SanchayDeepMapperUtils.convertMap(userMap, SanchayUserDTO.class, modelMapper);
 
@@ -457,13 +512,13 @@ public class SanchayUserServiceImpl implements SanchayUserService, UserDetailsSe
     {
         SanchayAnnotationManagementUpdateInfo annotationManagementUpdateInfo = SanchayAnnotationManagementUpdateInfo.builder().build();
 
-        annotationManagementUpdateInfo.setAllUsers(getAllUsers());
+        annotationManagementUpdateInfo.setAllUsers(getAllUsers(false));
         annotationManagementUpdateInfo.setAllRoles(getAllRoles());
         annotationManagementUpdateInfo.setAllOrganisations(getAllOrganisations());
         annotationManagementUpdateInfo.setAllLanguages(getAllLanguages());
         annotationManagementUpdateInfo.setAllLevels(getAllAnnotationLevels());
 
-        annotationManagementUpdateInfo.setAllSlimUsers(SanchayMapperUtils.convertMap(getAllUsers(), SanchayUserSlimDTO.class, modelMapper));
+        annotationManagementUpdateInfo.setAllSlimUsers(SanchayMapperUtils.convertMap(getAllUsers(false), SanchayUserSlimDTO.class, modelMapper));
         annotationManagementUpdateInfo.setAllSlimRoles(SanchayMapperUtils.convertMap(getAllRoles(), SanchayRoleSlimDTO.class, modelMapper));
         annotationManagementUpdateInfo.setAllSlimOrganisations(SanchayMapperUtils.convertMap(getAllOrganisations(), SanchayOrganisationSlimDTO.class, modelMapper));
         annotationManagementUpdateInfo.setAllSlimLanguages(SanchayMapperUtils.convertMap(getAllLanguages(), SanchayResourceLanguageSlimDTO.class, modelMapper));
