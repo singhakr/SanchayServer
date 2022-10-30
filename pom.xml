@@ -8,12 +8,12 @@
 		<version>2.7.0</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>sanchay.server</groupId>
+	<groupId>in.co.sanchay.server</groupId>
 	<artifactId>SanchayServer</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<packaging>war</packaging>
+	<packaging>jar</packaging>
 	<name>SanchayServer</name>
-	<description>Demo project for Spring Boot JWT Security</description>
+	<description>Sanchay Server</description>
 	<properties>
         <version.bootable.jar>1.0.0.Final</version.bootable.jar>
         <version.wildfly>26.1.1.Final</version.wildfly>
@@ -29,7 +29,7 @@
 		<deploy.wildfly.port>9990</deploy.wildfly.port>
 		<deploy.wildfly.username>wildfly</deploy.wildfly.username>
 		<deploy.wildfly.password>w1ldFly!</deploy.wildfly.password>
-		<start-class>sanchay.server.SanchayServerApplication</start-class>
+		<start-class>in.co.sanchay.server.SanchayServerApplication</start-class>
 	</properties>
 	<dependencies>
 		<!-- https://mvnrepository.com/artifact/jakarta.platform/jakarta.jakartaee-api -->
@@ -130,11 +130,11 @@
 			<artifactId>commons-beanutils</artifactId>
 			<version>1.9.4</version>
 		</dependency>
-		<dependency>
+		<!--dependency>
 			<groupId>org.hibernate.validator</groupId>
 			<artifactId>hibernate-validator</artifactId>
 			<version>6.2.3.Final</version>
-		</dependency>
+		</dependency-->
 		<dependency>
 			<groupId>org.thymeleaf</groupId>
 			<artifactId>thymeleaf</artifactId>
@@ -168,102 +168,87 @@
 			<artifactId>org.eclipse.jgit</artifactId>
 			<version>6.2.0.202206071550-r</version>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.hibernate/hibernate-annotations -->
 		<dependency>
 			<groupId>sanchay.server.dto</groupId>
-			<artifactId>sanchay-dto-model</artifactId>
-			<version>1.0</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/src/main/resources/SanchayServerDTO-1.0-SNAPSHOT.jar</systemPath>
+			<artifactId>SanchayServerDTO</artifactId>
+			<version>1.0-SNAPSHOT</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.hibernate/hibernate-annotations -->
 	</dependencies>
 
 	<build>
+		<!--pluginManagement-->
 		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>repackage</id>
+						<goals>
+							<goal>repackage</goal>
+						</goals>
+						<configuration>
+							<classifier>exec</classifier>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>2.7</version>
+				<executions>
+					<execution>
+						<id>copy-resources</id>
+						<!-- here the phase you need -->
+						<phase>validate</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.basedir}/target/SanchayServer-0.0.1-SNAPSHOT/WEB-INF/lib</outputDirectory>
+							<resources>
+								<resource>
+									<directory>${project.basedir}/src/main/resources</directory>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.10.1</version>
+				<configuration>
+					<source>17</source>
+					<target>17</target>
+				</configuration>
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-war-plugin</artifactId>
 				<version>3.3.2</version>
 				<configuration>
+					<webXml>src/main/webapp/WEB-INF/jboss-web.xml</webXml>
+					<attachClasses>true</attachClasses>
 					<failOnMissingWebXml>true</failOnMissingWebXml>
 					<webResources>
-						<!--resource>
-							<directory>${project.basedir}/src/main/resources/SanchayServerDTO-1.0-SNAPSHOT.jar</directory>
+						<resource>
+							<directory>${project.basedir}/src/main/resources</directory>
 							<targetPath>WEB-INF/lib</targetPath>
-						</resource-->
+						</resource>
 					</webResources>
+					<archive>
+						<!--manifestFile>src/main/resources/META-INF/MANIFEST.MF</manifestFile-->
+						<manifest>
+							<addClasspath>true</addClasspath>
+						</manifest>
+					</archive>
 				</configuration>
 			</plugin>
-			<plugin>
-				<groupId>org.wildfly.plugins</groupId>
-				<artifactId>wildfly-maven-plugin</artifactId>
-				<version>3.0.2.Final</version>
-				<executions>
-					<execution>
-						<phase>install</phase>
-						<goals>
-							<goal>deploy</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<filename>${project.build.finalName}.war</filename>
-					<hostname>${deploy.wildfly.host}</hostname>
-					<port>${deploy.wildfly.port}</port>
-					<username>${deploy.wildfly.username}</username>
-					<password>${deploy.wildfly.password}</password>
-				</configuration>
-			</plugin>
-			<!--plugin>
-				<groupId>org.wildfly.plugins</groupId>
-				<artifactId>wildfly-jar-maven-plugin</artifactId>
-				<version>7.0.2.Final</version>
-				<configuration>
-					<feature-pack-location>wildfly@maven(org.jboss.universe:community-universe)#26.1.1.Final</feature-pack-location>
-					<layers>
-						<layer>jaxrs</layer>
-					</layers>
-					<excluded-layers>
-						<layer>deployment-scanner</layer>
-					</excluded-layers>
-				</configuration>
-				<executions>
-					<execution>
-						<goals>
-							<goal>package</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin-->
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-				<configuration>
-					<mainClass>sanchay.server.SanchayServerApplication</mainClass>
-					<excludes>
-						<exclude>
-							<groupId>org.projectlombok</groupId>
-							<artifactId>lombok</artifactId>
-						</exclude>
-					</excludes>
-				</configuration>
-			</plugin>
-			<!--plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-shade-plugin</artifactId>
-				<version>3.3.0</version>
-				<executions>
-					<execution>
-						<phase>package</phase>
-						<goals>
-							<goal>shade</goal>
-						</goals>
-						<configuration>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin-->
 		</plugins>
+		<!--/pluginManagement-->
 	</build>
 
 </project>

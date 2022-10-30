@@ -31,3 +31,4 @@ build/
 
 ### VS Code ###
 .vscode/
+!/src/main/resources/SanchayServerDTO-1.0-SNAPSHOT.jar
