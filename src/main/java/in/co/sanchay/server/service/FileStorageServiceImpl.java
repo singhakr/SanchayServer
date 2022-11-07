@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
+import org.springframework.core.io.support.EncodedResource;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -50,7 +52,7 @@ public class FileStorageServiceImpl implements FileStorageService {
     }
 
     @Override
-    public String storeFile(MultipartFile file, String filePathOnServer) {
+    public String storeFile(MultipartFile file, String charset, String filePathOnServer) {
         // Normalize file name
         String fileName = StringUtils.cleanPath(file.getOriginalFilename());
 
@@ -71,10 +73,10 @@ public class FileStorageServiceImpl implements FileStorageService {
     }
 
     @Override
-    public String storeFile(String textContents, String filePathOnServer)
+    public String storeFile(String textContents, String charset, String filePathOnServer)
     {
         try {
-            FileWriter fileWriter = new FileWriter(filePathOnServer);
+            FileWriter fileWriter = new FileWriter(filePathOnServer, Charset.forName(charset));
             fileWriter.write(textContents);
             fileWriter.close();
 
@@ -85,7 +87,7 @@ public class FileStorageServiceImpl implements FileStorageService {
     }
 
     @Override
-    public Resource loadFileAsResource(String filePath) {
+    public EncodedResource loadFileAsEncodedResource(String filePath, String charset) {
         try {
 //            Path path = Paths.get(".", "temp.txt");
             Path path = Paths.get(filePath);
@@ -93,10 +95,14 @@ public class FileStorageServiceImpl implements FileStorageService {
 //            Path filePath = this.fileStorageLocation.resolve(fileName).normalize();
             Resource resource = new UrlResource(path.toUri());
             if(resource.exists()) {
-                return resource;
+//                return resource;
+                EncodedResource encodedResource = new EncodedResource(resource, charset);
+
+                return encodedResource;
             } else {
                 throw new SanchayFileNotFoundException("File not found " + filePath);
             }
+
         } catch (MalformedURLException ex) {
             throw new SanchayFileNotFoundException("File not found " + filePath, ex);
         }

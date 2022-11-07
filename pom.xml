@@ -74,6 +74,12 @@
 			<artifactId>mysql-connector-java</artifactId>
 			<scope>runtime</scope>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.mariadb.jdbc/mariadb-java-client -->
+		<dependency>
+			<groupId>org.mariadb.jdbc</groupId>
+			<artifactId>mariadb-java-client</artifactId>
+			<version>3.0.8</version>
+		</dependency>
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
@@ -168,12 +174,18 @@
 			<artifactId>org.eclipse.jgit</artifactId>
 			<version>6.2.0.202206071550-r</version>
 		</dependency>
+<!--		<dependency>-->
+<!--			<groupId>sanchay.server.dto</groupId>-->
+<!--			<artifactId>SanchayServerDTO</artifactId>-->
+<!--			<version>1.0-SNAPSHOT</version>-->
+<!--		</dependency>-->
 		<dependency>
-			<groupId>sanchay.server.dto</groupId>
-			<artifactId>SanchayServerDTO</artifactId>
-			<version>1.0-SNAPSHOT</version>
+			<groupId>sanchay</groupId>
+			<artifactId>dto</artifactId>
+			<version>1.0</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/src/main/resources/SanchayServerDTO-1.0-SNAPSHOT.jar</systemPath>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.hibernate/hibernate-annotations -->
 	</dependencies>
 
 	<build>

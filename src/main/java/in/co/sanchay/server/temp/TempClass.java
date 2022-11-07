@@ -1,4 +1,4 @@
-package sanchay.server.temp;
+package in.co.sanchay.server.temp;
 
 public class TempClass {
 
